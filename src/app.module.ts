@@ -42,7 +42,7 @@ import { GoogleDriveConfig } from './drivexls/types/googledriveconfig';
        
     }as GoogleDriveConfig,
     '1Y3weOs-ZCOjB8ndIYKaQJd_bqQ-K15Lt',//carpeta base SAD 1Y3weOs-ZCOjB8ndIYKaQJd_bqQ-K15Lt
-    '1VF7VElO8qSTAWaxIv5ovY8cOhSPr0oZ2O6wYIKp2QBQ'//spreadsheetId
+    '171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4'//spreadsheetId
     ),
   ],
   controllers: [AppController],

@@ -8,17 +8,18 @@ interface GeneralObject{
 
 @Injectable()
 export class GoogleXlsxService extends GoogleAutenticarService {
+  
   /**
    * 
    * @param spreadsheetId id de la hoja de calculo, por defecto viene en la configurwacion del modulo app, en caso se tenga otro, indicar en el modulo app
    * @param nameSheet es el nombre de la hoja que se va a agregar. 
    * @returns retorna un observable con el estado de la operacion
    */
-  public createSheet(spreadsheetId:string,nameSheet:string){
-    const GooglespreadsheetId = this.googleXlsxSpreadSheetId
+  public createSheet(nameSheet:string){
+    
     try {
             const res:Observable<any> = this.xlsx.spreadsheets.batchUpdate({
-              spreadsheetId: GooglespreadsheetId,
+              spreadsheetId: this.googleXlsxSpreadSheetId,
               requestBody: {
                 requests: [{
 
@@ -39,9 +40,10 @@ export class GoogleXlsxService extends GoogleAutenticarService {
             throw err;
           }
     }
-    public async getRows(spreadsheetId:string,sheetName:string,columnLetterInitial:string,columnLetterFinal:string):Promise<string[][]>  {
+    public async getRows(sheetName:string,columnLetterInitial:string,columnLetterFinal:string):Promise<string[][]>  {
       const range = `${sheetName}!${columnLetterInitial}:${columnLetterFinal}`;
-        try {
+      const spreadsheetId:string = this.googleXlsxSpreadSheetId
+      try {
             const res= this.xlsx.spreadsheets.values.get({spreadsheetId,range})
             return res
           } catch (err) {
@@ -49,9 +51,9 @@ export class GoogleXlsxService extends GoogleAutenticarService {
             throw err;
           }
     }
-    async getLastValueInColumnv2(spreadsheetId:string, sheetName:string, columnLetterInitial:string,columnLetterFinal:string) {
+    async getLastValueInColumnv2(sheetName:string, columnLetterInitial:string,columnLetterFinal:string) {
       //const range = `${sheetName}!${columnLetterInitial}:${columnLetterFinal}`;
-      const response:any = await this.getRows(spreadsheetId,sheetName,columnLetterInitial,columnLetterFinal)
+      const response:any = await this.getRows(sheetName,columnLetterInitial,columnLetterFinal)
       
       const allRows = response.data.values || [];
       
@@ -89,9 +91,10 @@ export class GoogleXlsxService extends GoogleAutenticarService {
         throw error;
     }
     }
-    public async setRow<T>(data:T,spreadsheetId:string,range:string){
+    public async setRow<T>(data:T,range:string){
         const valueInputOption='USER_ENTERED'
         const dataInput: T = data
+        const spreadsheetId:string = this.googleXlsxSpreadSheetId
           try {
             const res = await this.xlsx.spreadsheets.values.append({
               spreadsheetId,

@@ -16,15 +16,6 @@ export class AppController {
     return res
     //return this.appService.getHello();
   }
-  @Get('setsheet')
-  setSheet()  {
-    this.appService.setSheet("171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4","my hoja")
-  }
-  @Get('getrow')
-  getRow()  {
-    const rows = this.appService.getRows('171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4','CONFIGURACION',"A","G")
-    return rows
-  }
   @Get('setinsumo')
   setRow()  {
     const rest = this.appService.setInsumo([["insumo","idcategoria","idinsumo","u_medida"]])

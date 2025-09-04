@@ -8,6 +8,10 @@ import { configLoader } from 'config-loader';
 import { envSchema } from 'env-schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GoogleDriveConfig } from './drivexls/types/googledriveconfig';
+//coleccion de hojas de calculo, renombradas con un alias
+
+
+
 
 @Module({
   imports: [
@@ -42,7 +46,9 @@ import { GoogleDriveConfig } from './drivexls/types/googledriveconfig';
        
     }as GoogleDriveConfig,
     '1Y3weOs-ZCOjB8ndIYKaQJd_bqQ-K15Lt',//carpeta base SAD 1Y3weOs-ZCOjB8ndIYKaQJd_bqQ-K15Lt
-    '171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4'//spreadsheetId
+    '171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4',//spreadsheetId,
+    {hojas:[{"sheetId":"171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4","alias":"prueba"}]}
+    
     ),
   ],
   controllers: [AppController],

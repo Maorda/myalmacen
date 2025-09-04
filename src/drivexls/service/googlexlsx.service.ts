@@ -16,10 +16,11 @@ export class GoogleXlsxService extends GoogleAutenticarService {
    * @returns retorna un observable con el estado de la operacion
    */
   public createSheet(nameSheet:string){
+      
     
     try {
             const res:Observable<any> = this.xlsx.spreadsheets.batchUpdate({
-              spreadsheetId: this.googleXlsxSpreadSheetId,
+              spreadsheetId:  this.googleXlsxSpreadSheetId,
               requestBody: {
                 requests: [{
 

@@ -41,6 +41,26 @@ export class AppController {
     const res = this.appService.setAlmacen([["insumo","idcategoria","insumo","idcategoria","insumo","idcategoria","insumo","idcategoria","insumo","idcategoria","insumo","idcategoria"]])
     return res
   }
+  @Get('getcompras')
+  getCompras(){
+    const res = this.appService.getCompras()
+    return res
+  }
+  @Get('getalmacen')
+  getAlmacen(){
+    const res = this.appService.getAlmacen()
+    return res
+  }
+  @Get('getcategorias')
+  getCategorias(){
+    const res = this.appService.getCategorias()
+    return res
+  }
+  @Get('setasistencia')
+  setAsistencia(){
+    const res = this.appService.setAsistenciaPersonal([["insumo","idcategoria","insumo","idcategoria","insumo","idcategoria","insumo","idcategoria","insumo","idcategoria","insumo","idcategoria"]],"julio")
+    
+  }
 
 
 

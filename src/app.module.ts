@@ -8,8 +8,39 @@ import { configLoader } from 'config-loader';
 import { envSchema } from 'env-schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GoogleDriveConfig } from './drivexls/types/googledriveconfig';
+import { AsistenciaModule } from './asistencia/asistencia.module';
+import { GoogleXlsxService } from './drivexls/service/googlexlsx.service';
 //coleccion de hojas de calculo, renombradas con un alias
 
+interface ITable{
+  insumo:string,
+  personal:string,
+  categoriainsumo:string,
+}
+export enum EMesesAnio {
+  ENERO = "ENERO",
+  FEBRERO = "FEBRERO",
+  MARZO = "MARZO",
+  ABRIL = "ABRIL",
+  MAYO = "MAYO",
+  JUNIO = "JUNIO",
+  JULIO = "JULIO",
+  AGOSTO = "AGOSTO",
+  SEPTIEMBRE = "SEPTIEMBRE",
+  OCTUBRE = "OCTUBRE",
+  NOVIEMBRE = "NOVIEMBRE",
+  DICIEMBRE = "DICIEMBRE",
+}
+
+
+export enum EHojas{
+  CONFIGURACION="CONFIGURACION",
+  ALMACEN="ALMACEN",
+  COMPRAS="COMPRAS",
+}
+
+const concreteSheet = [EHojas.CONFIGURACION,EHojas.COMPRAS,EHojas.ALMACEN]
+const concreteSheetAsistencias = [EMesesAnio.ENERO,EMesesAnio.FEBRERO,EMesesAnio.MARZO,EMesesAnio.ABRIL,EMesesAnio.MAYO,EMesesAnio.JUNIO,EMesesAnio.JULIO,EMesesAnio.AGOSTO,EMesesAnio.SEPTIEMBRE,EMesesAnio.OCTUBRE,EMesesAnio.NOVIEMBRE,EMesesAnio.DICIEMBRE]
 
 
 
@@ -47,11 +78,12 @@ import { GoogleDriveConfig } from './drivexls/types/googledriveconfig';
     }as GoogleDriveConfig,
     '1Y3weOs-ZCOjB8ndIYKaQJd_bqQ-K15Lt',//carpeta base SAD 1Y3weOs-ZCOjB8ndIYKaQJd_bqQ-K15Lt
     '171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4',//spreadsheetId,
-    {hojas:[{"sheetId":"171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4","alias":"prueba"}]}
+    [{sheetId:'171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4',hojas:concreteSheet},{sheetId:"1jrBtnOQQJSBLoR4PTPfThuHnCpci-BCPfeHQn-6u0b8",hojas:concreteSheetAsistencias}]
     
     ),
+    AsistenciaModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,GoogleXlsxService,ConfigModule],
 })
 export class AppModule {}

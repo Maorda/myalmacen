@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { GoogleDriveConfig } from '../types/googledriveconfig';
-import { EFOLDERSIDS } from '../drivexls.module';
+
+export interface IGoogleXlsConfig {
+  sheetId:string;
+  hojas:Array<string>;
+}
 
 @Injectable()
 export class GoogleAutenticarService{
@@ -10,6 +14,8 @@ export class GoogleAutenticarService{
     @Inject("CONFIG") private config: GoogleDriveConfig,
     @Inject("FOLDERBASEID") private googleDriveFolderBaseId: string,
     @Inject("CONFIG_SHEETID_FILE") public googleXlsxSpreadSheetId: string,
+    @Inject("GOOGLEXLSXCONFIG") public googleHojas: Array<IGoogleXlsConfig>,
+    
   ) {
     const auth = new google.auth.GoogleAuth({
       credentials: {

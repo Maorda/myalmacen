@@ -5,9 +5,13 @@ import { Observable, catchError, from, map, throwError } from 'rxjs';
 interface GeneralObject{
     [key:string]:any
   }
-
+ interface IXlsConfig {
+  sheetId:string;
+  hojas:Array<string>;
+ }
 @Injectable()
 export class GoogleXlsxService extends GoogleAutenticarService {
+
   
   /**
    * 
@@ -16,11 +20,10 @@ export class GoogleXlsxService extends GoogleAutenticarService {
    * @returns retorna un observable con el estado de la operacion
    */
   public createSheet(nameSheet:string){
-      
-    
+        
     try {
             const res:Observable<any> = this.xlsx.spreadsheets.batchUpdate({
-              spreadsheetId:  this.googleXlsxSpreadSheetId,
+              spreadsheetId: this.googleXlsxSpreadSheetId,
               requestBody: {
                 requests: [{
 
@@ -41,20 +44,20 @@ export class GoogleXlsxService extends GoogleAutenticarService {
             throw err;
           }
     }
-    public async getRows(sheetName:string,columnLetterInitial:string,columnLetterFinal:string):Promise<string[][]>  {
+    public async getRows(sheetName:string,columnLetterInitial:string,columnLetterFinal:string,spreadSheetId?:string):Promise<string[][]>  {
       const range = `${sheetName}!${columnLetterInitial}:${columnLetterFinal}`;
-      const spreadsheetId:string = this.googleXlsxSpreadSheetId
+      const spreadsheetId:string = spreadSheetId || this.googleXlsxSpreadSheetId
       try {
-            const res= this.xlsx.spreadsheets.values.get({spreadsheetId,range})
+            const res= await this.xlsx.spreadsheets.values.get({spreadsheetId,range})
             return res
           } catch (err) {
             // TODO (developer) - Handle exception
             throw err;
           }
     }
-    async getLastValueInColumnv2(sheetName:string, columnLetterInitial:string,columnLetterFinal:string) {
+    async getLastValueInColumnv2(sheetName:string, columnLetterInitial:string,columnLetterFinal:string,spreadSheetId?:string) {
       //const range = `${sheetName}!${columnLetterInitial}:${columnLetterFinal}`;
-      const response:any = await this.getRows(sheetName,columnLetterInitial,columnLetterFinal)
+      const response:any = await this.getRows(sheetName,columnLetterInitial,columnLetterFinal,spreadSheetId)
       
       const allRows = response.data.values || [];
       
@@ -92,10 +95,10 @@ export class GoogleXlsxService extends GoogleAutenticarService {
         throw error;
     }
     }
-    public async setRow<T>(data:T,range:string){
+    public async setRow<T>(data:T,range:string,spreadSheetId?:string){
         const valueInputOption='USER_ENTERED'
         const dataInput: T = data
-        const spreadsheetId:string = this.googleXlsxSpreadSheetId
+        const spreadsheetId:string = spreadSheetId || this.googleXlsxSpreadSheetId
           try {
             const res = await this.xlsx.spreadsheets.values.append({
               spreadsheetId,
@@ -106,6 +109,7 @@ export class GoogleXlsxService extends GoogleAutenticarService {
                 values: dataInput,
               },
             })
+            console.log(this.googleHojas)
             return res.status
           } catch (err) {
             // TODO (developer) - Handle exception

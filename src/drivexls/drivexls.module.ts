@@ -4,17 +4,11 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { DynamicModule } from '@nestjs/common';
 import { GoogleDriveConfig } from './types/googledriveconfig';
-import { GoogleAutenticarService } from './service/googleautenticar.service';
+import { GoogleAutenticarService, IGoogleXlsConfig } from './service/googleautenticar.service';
 import { GoogleXlsxService } from './service/googlexlsx.service';
 
 
-interface hoja {
-  sheetId:string
-  alias:string
-}
-interface IHojas{
-  hojas:hoja[]
-}
+
 export const enum EFOLDERSIDS {
   CONFIG = "CONFIG",
   FOLDERBASEID = "FOLDERBASEID",
@@ -40,7 +34,7 @@ static register(
   //googleDriveLogosFolderId: string,//carpeta donde se alojará el logo del usuario
   //googleDriveArchivosFolderId: string,//carpeta donde se alojara toda la gestion documentaria del usuario
   googleSpreadsheetId:string,
-  googleHojas:IHojas
+  googleHojas:Array<IGoogleXlsConfig>
 ): DynamicModule {
   return {
     module: DrivexlsModule,
@@ -52,7 +46,7 @@ static register(
      
       { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },
       {provide:EFOLDERSIDS.CONFIG_SHEETID_FILE,useValue:googleSpreadsheetId},
-      {provide:"GOOGLEHOJAS",useValue:googleHojas}
+      {provide:"GOOGLEXLSXCONFIG",useValue:googleHojas}
       
     ],
     exports: [
@@ -63,7 +57,7 @@ static register(
    
       { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },
       {provide:EFOLDERSIDS.CONFIG_SHEETID_FILE,useValue:googleSpreadsheetId},
-      {provide:"GOOGLEHOJAS",useValue:googleHojas}
+      {provide:"GOOGLEXLSXCONFIG",useValue:googleHojas}
     
     ],
   };

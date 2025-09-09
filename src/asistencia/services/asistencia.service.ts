@@ -1,8 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { error } from 'console';
 import { any } from 'joi';
 import { GoogleXlsxService } from 'src/drivexls/service/googlexlsx.service';
 interface GeneralObject{
     [key:string]:any
+}
+export type ProductId = string;
+
+// Define la interfaz para la estructura de un producto
+export interface IProduct {
+  id: ProductId;
+  name: string;
+  price: number;
+}
+export enum EPreformat{
+    IDCOMPRA = "COM",
+    IDCATEGORIAINSUMO = "CATINS",
+    IDINSUMO = "INS",
+    IDCATEGORIAPERSONAL ="CATPER",
+    IDPERSONAL = "PER"
 }
 
 const nombreColumna:GeneralObject = {}
@@ -34,27 +50,13 @@ nombreColumna["25"]="AC";
 nombreColumna["26"]="AD";
 nombreColumna["27"]="AE";
 
-
-
-
-
-
-
-
-interface IAsistencia {
-    personal:string;
-    asistencia:number
-}
 @Injectable()
 export class AsistenciaService {
     constructor(
         private readonly googleDriveService: GoogleXlsxService,
     ){}
-    insertAsistencia(){
-        
-        this.googleDriveService.setRow(["nombre","apellido"],"ENERO!E4")
-    }
-    async recorreDias(idpersonas:Array<number[]>){
+    
+    async insertaAsistencia(idpersonas:Array<number[]>){
         const today = new Date();
         //la respuesta se da en ingles
         const monthName = today.toLocaleString('default', { month: 'long' });
@@ -68,8 +70,10 @@ export class AsistenciaService {
          ve.forEach((element,index) => {
                 if(esFechaActual(element)){
                     //fechaActual=element
-                    diaMes = index + 1
-                    
+                    diaMes = index + 1   
+                }
+                else{
+                    return error("la fecha de hoy no coincide con los dias de trabajo")
                 }
         });
         const ultimoRegistroAsistencias = await this.googleDriveService.getLastValueInColumnv2(monthName,"A","A","1jrBtnOQQJSBLoR4PTPfThuHnCpci-BCPfeHQn-6u0b8")
@@ -92,7 +96,16 @@ export class AsistenciaService {
         
         return ve
     }
+    async insertaPersonal(data:Array<any[]>){
+        const lastPersonal = await this.googleDriveService.getLastValueInColumnv2("REGISTROPERSONAL","A","A","171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4")
+        console.log(`REGISTROPERSONAL!A${lastPersonal}:AE${lastPersonal}`)
+        const newPersonal = await this.googleDriveService.setRow(data,`REGISTROPERSONAL!A${lastPersonal+1}:E${lastPersonal+1}`,"171QJrvwwwfZ0HozPwTkF8fkz7Ufq7vgaD96uAmgTmK4")
+        return newPersonal
+
+    }
 }
+
+
 /**
  * Compara si una fecha dada en formato MM/DD/YYYY es igual a la fecha actual.
  *
@@ -125,4 +138,73 @@ function esFechaActual(fechaStr: string): boolean {
     const mismoDia = fechaEntrada.getDate() === fechaHoy.getDate();
   console.log("mes", mismoMes)
     return mismoAnio && mismoMes && mismoDia;
+  }
+// Clase que representa a un producto
+export class Product implements IProduct {
+    // Las propiedades son públicas por defecto en TypeScript
+    constructor(
+      public id: ProductId,
+      public name: string,
+      public price: number
+    ) {}
+  }
+  export class ProductManager {
+    // Un mapa para almacenar productos, usando el ID como clave
+    private products = new Map<ProductId, Product>();
+  
+    // Un contador simple para generar IDs secuenciales
+    private nextId = 1;
+  
+    // Método para generar un nuevo ID único
+    private generateId(): ProductId {
+      // Genera un ID simple y lo convierte a string
+      const newId = `prod-${this.nextId}`;
+      this.nextId++;
+      return newId;
+    }
+  
+    // Método para añadir un nuevo producto
+    public addProduct(name: string, price: number): Product | null {
+      // Generar un ID para el nuevo producto
+      const id = this.generateId();
+  
+      // Validar si el ID ya existe (aunque nuestro generador lo evita)
+      if (this.products.has(id)) {
+        console.error(`Error: El producto con ID ${id} ya existe.`);
+        return null;
+      }
+  
+      // Crear la instancia del producto y añadirla al mapa
+      const newProduct = new Product(id, name, price);
+      this.products.set(id, newProduct);
+      console.log(`Producto "${name}" añadido con ID: ${id}`);
+      return newProduct;
+    }
+  
+    // Método para obtener un producto por su ID
+    public getProductById(id: ProductId): Product | undefined {
+      // Devuelve el producto si se encuentra, o 'undefined' si no
+      return this.products.get(id);
+    }
+  
+    // Método para listar todos los productos
+    public getAllProducts(): Product[] {
+      // Convierte los valores del mapa en un array
+      return Array.from(this.products.values());
+    }
+  
+    // Método para eliminar un producto por su ID
+    public removeProductById(id: ProductId): boolean {
+      if (this.products.has(id)) {
+        this.products.delete(id);
+        console.log(`Producto con ID ${id} eliminado.`);
+        return true;
+      }
+      console.warn(`Advertencia: No se encontró un producto con ID ${id}.`);
+      return false;
+    }
+  }
+  export function generateId(preformat:EPreformat,ultimoRegistro:number){
+    const newId = `${preformat.toUpperCase()}${ultimoRegistro + 1}`;
+    return newId
   }

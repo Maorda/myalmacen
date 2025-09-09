@@ -10,6 +10,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { GoogleDriveConfig } from './drivexls/types/googledriveconfig';
 import { AsistenciaModule } from './asistencia/asistencia.module';
 import { GoogleXlsxService } from './drivexls/service/googlexlsx.service';
+import { InsumosModule } from './insumos/insumos.module';
+import { ReuseCrud } from './tools/reuse_crud';
 //coleccion de hojas de calculo, renombradas con un alias
 
 interface ITable{
@@ -82,8 +84,9 @@ const concreteSheetAsistencias = [EMesesAnio.ENERO,EMesesAnio.FEBRERO,EMesesAnio
     
     ),
     AsistenciaModule,
+    InsumosModule,
   ],
   controllers: [AppController],
-  providers: [AppService,GoogleXlsxService,ConfigModule],
+  providers: [AppService,GoogleXlsxService,ConfigModule,ReuseCrud],
 })
 export class AppModule {}
